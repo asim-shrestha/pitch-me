@@ -10,18 +10,19 @@ import {
   AiOutlineUndo,
   AiOutlinePause, AiOutlinePlayCircle
 } from 'react-icons/ai';
-import { QUESTIONS } from "@/app/questions";
+import { getQuestions, QUESTIONS } from "@/app/questions";
 
 export default function Home() {
-  const [questions, setQuestions] = useState(QUESTIONS);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timer, setTimer] = useState(20.000); // 20 seconds with milliseconds
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    setQuestions(getQuestions());
     startTimer();
-  });
+  }, []);
 
   const startTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);

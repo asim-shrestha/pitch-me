@@ -49,3 +49,16 @@ export const QUESTIONS = [
   "What’s the equity split among the founders? How did you decide on that split?",
   "If there were one area where you could use external help or expertise, what would it be?",
 ];
+
+function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = array.slice(); // Make a shallow copy to avoid modifying the original array
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+    }
+
+    return shuffled;
+}
+
+export const getQuestions = () => shuffleArray(QUESTIONS);
