@@ -34,50 +34,46 @@ export default function Home() {
     }, 10);
   };
 
-  const playTimer = () => {
+  const handlePlay = () => {
     setIsPaused(false);
     startTimer();
   }
 
-  const pauseTimer = () => {
+  const handlePause = () => {
     setIsPaused(true);
     if (intervalRef.current) clearInterval(intervalRef.current);
   };
 
-  const resetTimer = () => {
+  const handleReset = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     setTimer(maxTime);
     startTimer();
-    console.log("Reset")
   };
 
   const updateIndex = (index: number) => {
-    console.log(index);
-    console.log(index);
-    console.log(index);
     setCurrentIndex(index);
-    resetTimer();
+    handleReset();
   }
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && currentIndex < questions.length - 1) {
         setCurrentIndex(prev => prev + 1);
-        resetTimer();
+        handleReset();
       }
       if (e.key === 'ArrowLeft' && currentIndex > 0) {
         setCurrentIndex(prev => prev - 1);
-        resetTimer();
+        handleReset();
       }
       if (e.key === 'ArrowUp') {
-        resetTimer();
+        handleReset();
       }
       if (e.key === 'ArrowDown') {
-        if (isPaused) playTimer();
-        else pauseTimer();
+        if (isPaused) handlePlay();
+        else handlePause();
       }
       if (e.key === ' ') {
-        resetTimer();
+        handleReset();
       }
     };
     window.addEventListener('keydown', handleKeyPress);
@@ -94,17 +90,17 @@ export default function Home() {
       <div className="flex-1 grid place-items-center">
         <p className="text-2xl font-semibold text-center">{questions[currentIndex]}</p>
       </div>
-      <div className="flex items-center justify-center relative">
+      <div className="flex flex-col items-center justify-center relative">
         {
           timer > 0 ? (
             <>
               <div className="top-0 right-0 h-20 w-20">
                 <LoadingSpinner timer={maxTime - timer} totalDuration={maxTime} />
               </div>
-              <div className="absolute">{timer.toFixed(1)}</div>
-              <span className={clsx("bg-red-500 text-white px-2 py-1 rounded", isPaused ? "flex" : "hidden")}>
-                Paused
-              </span>
+              {
+                isPaused ? <AiOutlinePause size={25} className="absolute" /> :
+                  <div className="absolute font-bold">{timer.toFixed(1)}</div>
+              }
             </>
           ) : (
             <span className="border-red-500 border text-white text-2xl p-3 rounded-full px-5 bg-red-500/20">
@@ -120,10 +116,10 @@ export default function Home() {
         <p>Press <span className="font-semibold">Down Arrow</span> to pause/resume timer.</p>
       </div>
       <div className="flex flex-col items-center">
-        <Button onClick={resetTimer}><AiOutlineUndo /></Button>
+        <Button onClick={handleReset}><AiOutlineUndo /></Button>
         <div>
           <Button onClick={() => updateIndex(currentIndex - 1)}><AiOutlineLeft /></Button>
-          <Button onClick={() => (isPaused ? playTimer() : pauseTimer())}>
+          <Button onClick={() => (isPaused ? handlePlay() : handlePause())}>
             {
               isPaused ? <AiOutlinePlayCircle /> : <AiOutlinePause />
             }
