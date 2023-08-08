@@ -6,7 +6,7 @@ function LoadingSpinner({ timer, totalDuration }: { timer: number, totalDuration
 
   useEffect(() => {
     const percentage = (timer / totalDuration) * 100;
-    controls.start({ pathLength: percentage / 100 }).then(r => console.log(r));
+    controls.start({ pathLength: percentage / 100 }).then(void 0);
   }, [timer, controls, totalDuration]);
 
   return (

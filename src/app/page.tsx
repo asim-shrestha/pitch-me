@@ -107,9 +107,9 @@ export default function Home() {
               </span>
             </>
           ) : (
-            <span className="bg-red-500 text-white text-2xl px-2 py-1 rounded ml-4">
-        Goodbye seed round 😢
-      </span>
+            <span className="border-red-500 border text-white text-2xl p-3 rounded-full px-5 bg-red-500/20">
+              Goodbye seed round 😢
+            </span>
           )
         }
       </div>
