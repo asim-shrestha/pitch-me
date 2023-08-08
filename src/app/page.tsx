@@ -149,7 +149,9 @@ export default function Home() {
       </div>
       <div className="text-xs">
         By <a href="https://asim-shrestha.com/" target="_blank" rel="noopener noreferrer"
-              className="text-blue-500 hover:underline">Asim Shrestha</a>
+              className="text-blue-500 hover:underline">Asim Shrestha</a>. Inspired by <a
+        href="https://jamescun.github.io/iPG/" target="_blank" rel="noopener noreferrer"
+        className="text-blue-500 hover:underline">iPG</a>.
       </div>
     </main>
   )
