@@ -46,10 +46,15 @@ export const QUESTIONS = [
   "Describe your ideal customer.",
   "How do you handle the potential misuse of your AI technology?",
   "What keeps you up at night regarding your business?",
-  "What’s the equity split among the founders? How did you decide on that split?",
+  "What's the equity split among the founders? How did you decide on that split?",
   "If there were one area where you could use external help or expertise, what would it be?",
   "What questions do you have for us?",
   "What are you looking for in an investor?",
+  "What culture are you trying to build?",
+  "What are the goals for the next 6 months?",
+  "What is the long term vision of the company?",
+  "What are the specifics of your short term product roadmap?",
+  "How much are you looking to raise?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
