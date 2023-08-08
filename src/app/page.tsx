@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineLeft, AiOutlinePause, AiOutlinePlayCircle, AiOutlineRight, AiOutlineUndo } from 'react-icons/ai';
 import { getQuestions } from "@/app/questions";
 import clsx from "clsx";
@@ -15,61 +15,59 @@ export default function Home() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const [timer, setTimer] = useState(MAX_TIME);
-
   const pausedTimeRef = useRef<number>(0);
   const [isPaused, setIsPaused] = useState(false);
+  const timeOffsetRef = useRef<number>(0);
+
 
   useEffect(() => {
-    // Fetch questions and start the timer
     setQuestions(getQuestions());
-    startTimer();
+    startTimer(true);
   }, []);
 
-  const startTimer = (forceStart: boolean = false) => {
+  const startTimer = useCallback((forceStart: boolean = false) => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (!forceStart && isPaused) return;
 
-    // Adjusting the startTimeRef when resuming
-    if (pausedTimeRef.current > 0 && startTimeRef.current) {
-      startTimeRef.current = Date.now() - pausedTimeRef.current * 1000;
-      pausedTimeRef.current = 0;
-    } else {
-      startTimeRef.current = Date.now();
-    }
+    startTimeRef.current = Date.now() - pausedTimeRef.current;
 
     intervalRef.current = setInterval(() => {
-      const elapsed = (Date.now() - (startTimeRef.current || Date.now())) / 1000;
-      const newTime = MAX_TIME - elapsed;
+      const elapsed = (Date.now() - (startTimeRef.current || Date.now()));
+      const newTime = MAX_TIME - elapsed / 1000;
       if (newTime <= 0) {
         clearInterval(intervalRef.current || undefined);
         setTimer(0);
       } else {
         setTimer(newTime);
       }
-    }, 10);
-  };
+    }, 100);
+  }, [isPaused]);
 
-  const handleResume = () => {
+
+  const handleResume = useCallback(() => {
     setIsPaused(false);
     startTimer(true);
-  }
+  }, [startTimer]);
+
 
   const handlePause = () => {
     setIsPaused(true);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
-      startTimeRef.current = null;
+      pausedTimeRef.current = Date.now() - (startTimeRef.current || Date.now());
     }
   };
 
-  const handleReset = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      startTimeRef.current = null;
-    }
+
+  const handleReset = useCallback(() => {
+    setIsPaused(false);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    pausedTimeRef.current = 0;
+    startTimeRef.current = null;
     setTimer(MAX_TIME);
-    startTimer();
-  };
+    startTimer(true);
+  }, [startTimer]);
+
 
   const updateIndex = (index: number) => {
     setCurrentQuestionIndex(index);
@@ -102,7 +100,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [questions, currentQuestionIndex, isPaused]);
+  }, [handleReset, handleResume, questions, currentQuestionIndex, isPaused]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 sm:p-24 gap-10">
@@ -110,7 +108,7 @@ export default function Home() {
         Pitch me.
       </h1>
       <div className="flex-1 grid place-items-center">
-        <p className="text-2xl font-semibold text-center">{questions[currentQuestionIndex]}</p>
+        <p className="text-xl font-semibold text-center">{questions[currentQuestionIndex]}</p>
       </div>
       <div className="flex flex-col items-center justify-center relative">
         {
@@ -125,17 +123,17 @@ export default function Home() {
               }
             </>
           ) : (
-            <span className="border-red-500 border text-white text-2xl p-3 rounded-full px-5 bg-red-500/20">
+            <span className="border-red-500 border text-white text-lg md:text-xl p-3 rounded-full px-5 bg-red-500/20">
               Goodbye seed round 😢
             </span>
           )
         }
       </div>
-      <div className=" font-thin text-sm">
-        <p>Press <span className="font-semibold">Right Arrow</span> for next question.</p>
-        <p>Press <span className="font-semibold">Left Arrow</span> for previous question.</p>
-        <p>Press <span className="font-semibold">Up Arrow</span> to restart timer.</p>
-        <p>Press <span className="font-semibold">Down Arrow</span> to pause/resume timer.</p>
+      <div className="hidden lg:block font-thin text-sm">
+        <p>Press <Highlight>Right Arrow</Highlight> for next question.</p>
+        <p>Press <Highlight>Left Arrow</Highlight> for previous question.</p>
+        <p>Press <Highlight>Up Arrow</Highlight> or <Highlight>Space</Highlight> to restart the timer.</p>
+        <p>Press <Highlight>Down Arrow</Highlight> to pause/resume the timer.</p>
       </div>
       <div className="flex flex-col items-center">
         <Button onClick={handleReset}><AiOutlineUndo /></Button>
@@ -148,6 +146,10 @@ export default function Home() {
           </Button>
           <Button onClick={() => updateIndex(currentQuestionIndex + 1)}><AiOutlineRight /></Button>
         </div>
+      </div>
+      <div className="text-xs">
+        By <a href="https://asim-shrestha.com/" target="_blank" rel="noopener noreferrer"
+              className="text-blue-500 hover:underline">Asim Shrestha</a>
       </div>
     </main>
   )
@@ -168,3 +170,7 @@ const Button = ({ className, onClick, children }: ButtonProps) => {
     </button>
   );
 };
+
+const Highlight = ({ children }: { children: ReactNode }) => {
+  return <span className="bg-neutral-300 text-black font-medium rounded px-1">{children}</span>;
+}
