@@ -1,4 +1,3 @@
-// pages/index.tsx
 "use client";
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
@@ -7,69 +6,92 @@ import { getQuestions } from "@/app/questions";
 import clsx from "clsx";
 import LoadingSpinner from "@/app/spinner";
 
+const MAX_TIME = 10;
+
 export default function Home() {
-  const maxTime = 10;
   const [questions, setQuestions] = useState<string[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [timer, setTimer] = useState(maxTime);
-  const [isPaused, setIsPaused] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const [timer, setTimer] = useState(MAX_TIME);
+
+  const pausedTimeRef = useRef<number>(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
+    // Fetch questions and start the timer
     setQuestions(getQuestions());
     startTimer();
   }, []);
 
-  const startTimer = () => {
+  const startTimer = (forceStart: boolean = false) => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    if (isPaused) return;
+    if (!forceStart && isPaused) return;
+
+    // Adjusting the startTimeRef when resuming
+    if (pausedTimeRef.current > 0 && startTimeRef.current) {
+      startTimeRef.current = Date.now() - pausedTimeRef.current * 1000;
+      pausedTimeRef.current = 0;
+    } else {
+      startTimeRef.current = Date.now();
+    }
+
     intervalRef.current = setInterval(() => {
-      setTimer(prev => {
-        if (prev <= 0.01) {
-          clearInterval(intervalRef.current || undefined);
-          return 0;
-        }
-        return prev - 0.01;
-      });
+      const elapsed = (Date.now() - (startTimeRef.current || Date.now())) / 1000;
+      const newTime = MAX_TIME - elapsed;
+      if (newTime <= 0) {
+        clearInterval(intervalRef.current || undefined);
+        setTimer(0);
+      } else {
+        setTimer(newTime);
+      }
     }, 10);
   };
 
-  const handlePlay = () => {
+  const handleResume = () => {
     setIsPaused(false);
-    startTimer();
+    startTimer(true);
   }
 
   const handlePause = () => {
     setIsPaused(true);
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      startTimeRef.current = null;
+    }
   };
 
   const handleReset = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setTimer(maxTime);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      startTimeRef.current = null;
+    }
+    setTimer(MAX_TIME);
     startTimer();
   };
 
   const updateIndex = (index: number) => {
-    setCurrentIndex(index);
+    setCurrentQuestionIndex(index);
     handleReset();
   }
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' && currentIndex < questions.length - 1) {
-        setCurrentIndex(prev => prev + 1);
+      if (e.key === 'ArrowRight' && currentQuestionIndex < questions.length - 1) {
+        console.log('right');
+        setCurrentQuestionIndex(prev => prev + 1);
         handleReset();
       }
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(prev => prev - 1);
+      if (e.key === 'ArrowLeft' && currentQuestionIndex > 0) {
+        setCurrentQuestionIndex(prev => prev - 1);
         handleReset();
       }
       if (e.key === 'ArrowUp') {
         handleReset();
       }
       if (e.key === 'ArrowDown') {
-        if (isPaused) handlePlay();
+        if (isPaused) handleResume();
         else handlePause();
       }
       if (e.key === ' ') {
@@ -80,7 +102,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [currentIndex, isPaused]);
+  }, [questions, currentQuestionIndex, isPaused]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 sm:p-24 gap-10">
@@ -88,14 +110,14 @@ export default function Home() {
         Pitch me.
       </h1>
       <div className="flex-1 grid place-items-center">
-        <p className="text-2xl font-semibold text-center">{questions[currentIndex]}</p>
+        <p className="text-2xl font-semibold text-center">{questions[currentQuestionIndex]}</p>
       </div>
       <div className="flex flex-col items-center justify-center relative">
         {
           timer > 0 ? (
             <>
               <div className="top-0 right-0 h-20 w-20">
-                <LoadingSpinner timer={maxTime - timer} totalDuration={maxTime} />
+                <LoadingSpinner timer={MAX_TIME - timer} totalDuration={MAX_TIME} />
               </div>
               {
                 isPaused ? <AiOutlinePause size={25} className="absolute" /> :
@@ -118,13 +140,13 @@ export default function Home() {
       <div className="flex flex-col items-center">
         <Button onClick={handleReset}><AiOutlineUndo /></Button>
         <div>
-          <Button onClick={() => updateIndex(currentIndex - 1)}><AiOutlineLeft /></Button>
-          <Button onClick={() => (isPaused ? handlePlay() : handlePause())}>
+          <Button onClick={() => updateIndex(currentQuestionIndex - 1)}><AiOutlineLeft /></Button>
+          <Button onClick={() => (isPaused ? handleResume() : handlePause())}>
             {
               isPaused ? <AiOutlinePlayCircle /> : <AiOutlinePause />
             }
           </Button>
-          <Button onClick={() => updateIndex(currentIndex + 1)}><AiOutlineRight /></Button>
+          <Button onClick={() => updateIndex(currentQuestionIndex + 1)}><AiOutlineRight /></Button>
         </div>
       </div>
     </main>
