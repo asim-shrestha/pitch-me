@@ -55,6 +55,31 @@ export const QUESTIONS = [
   "What is the long term vision of the company?",
   "What are the specifics of your short term product roadmap?",
   "How much are you looking to raise?",
+  "What is your current burn rate?",
+  "What is your current ARR?",
+  "How much are you raising?",
+  "You’re raising at an $x cap? How did you come up with that number?",
+  "Why are you only raising $x? That seems like not enough to get you to your Series A, and it may not be a big enough round for a fund of our size.",
+  "Do you have any questions for us?",
+  "Who else has invested?",
+  "Are you looking for a lead investor?",
+  "Who will be your next hire?",
+  "Who else are you talking to?", // trick question: DO NOT ANSWER
+  "What are you looking for in an investor/partner?",
+  "What is your market size?",
+  "How do you think about defensibility / why can’t your competitors copy this?",
+  "What’s your moat?",
+  "What questions should I have asked you that I didn’t?",
+  "How are you different than [competitor name]?",
+  "Tell me about your competitive landscape.",
+  "What’s your GTM strategy?",
+  "How are you thinking about spending the money you raise (and how this will affect your burn)? How long will it last you? What hires are you planning to make first?",
+  "What's your exit strategy?",
+  "Why are you a solo founder?",
+  "What are the biggest challenges you expect to have in the future? What would be a reason you may not succeed in building a billion $ business? If you fail, what will be the main reason?",
+  "What keeps you up at night?",
+  "What’s your short term product roadmap look like, and what does the product look like 5-10 years from now?",
+  "What is the top reason customers say no to buying your product?"
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
