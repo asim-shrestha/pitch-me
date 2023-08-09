@@ -6,7 +6,7 @@ import { getQuestions } from "@/app/questions";
 import clsx from "clsx";
 import LoadingSpinner from "@/app/spinner";
 
-const MAX_TIME = 10;
+const MAX_TIME = 15;
 
 export default function Home() {
   const [questions, setQuestions] = useState<string[]>([]);
