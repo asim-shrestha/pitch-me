@@ -15,6 +15,10 @@ export const QUESTIONS = [
   "Why did you pick this idea to work on?",
   "What is the next step with the product evolution?",
   "Who needs what you're making?",
+  "Who is the team?",
+  "What problem are you solving?",
+  "How do you know it’s a real problem?",
+  "Why should we invest?",
   "How do we know your team will stick together?",
   "What has surprised you about user behaviour?",
   "What is your distribution strategy?",
@@ -68,7 +72,7 @@ export const QUESTIONS = [
   "How do you think about defensibility / why can’t your competitors copy this?",
   "What’s your moat?",
   "What questions should I have asked you that I didn’t?",
-  "How are you different than [competitor name]?",
+  "How are you different than [your biggest competitor]?",
   "Tell me about your competitive landscape.",
   "What’s your GTM strategy?",
   "How are you thinking about spending the money you raise (and how this will affect your burn)? How long will it last you?",
@@ -79,18 +83,19 @@ export const QUESTIONS = [
   "What are the biggest challenges you expect to have in the future? What would be a reason you may not succeed in building a billion $ business? If you fail, what will be the main reason?",
   "What keeps you up at night?",
   "What’s your short term product roadmap look like, and what does the product look like 5-10 years from now?",
-  "What is the top reason customers say no to buying your product?"
+  "What is the top reason customers say no to buying your product?",
+  "How would your ideal investor support you?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = array.slice(); // Make a shallow copy to avoid modifying the original array
+  const shuffled = array.slice(); // Make a shallow copy to avoid modifying the original array
 
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
-    }
+  for(let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+  }
 
-    return shuffled;
+  return shuffled;
 }
 
 export const getQuestions = () => shuffleArray(QUESTIONS);
