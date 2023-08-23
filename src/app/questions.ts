@@ -85,6 +85,8 @@ export const QUESTIONS = [
   "What’s your short term product roadmap look like, and what does the product look like 5-10 years from now?",
   "What is the top reason customers say no to buying your product?",
   "How would your ideal investor support you?",
+  "How is this better than what is out there? How big of a difference is this really?",
+  "What are the 2-3 key things your product lacks?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
