@@ -6,5 +6,4 @@ by https://jamescun.github.io/iPG/
 ChatGPT wrote most of this
 
 ## Adding questions
-s
 Travel to `./src/app/questions.ts` and add whatever question you'd like
