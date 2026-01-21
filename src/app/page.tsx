@@ -60,18 +60,18 @@ export default function Home() {
 
 
   const handleReset = useCallback(() => {
-    setIsPaused(false);
     if (intervalRef.current) clearInterval(intervalRef.current);
     pausedTimeRef.current = 0;
     startTimeRef.current = null;
     setTimer(MAX_TIME);
-    startTimer(true);
+    startTimer();
   }, [startTimer]);
 
 
   const updateIndex = (index: number) => {
-    setCurrentQuestionIndex(index);
     handleReset();
+    handlePause();
+    setCurrentQuestionIndex(index);
   }
 
   useEffect(() => {
